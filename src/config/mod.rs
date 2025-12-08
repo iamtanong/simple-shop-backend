@@ -1,5 +1,5 @@
 mod app;
-mod db;
+pub mod db;
 pub mod log;
 
 use crate::utils;
@@ -12,7 +12,7 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
-    pub fn new(env: AppEnv) -> Self {
+    pub fn new(env: &AppEnv) -> Self {
         load_env(env);
         AppConfig {
             server_config: app::ServerConfig {
@@ -23,18 +23,18 @@ impl AppConfig {
             db_config: db::DBConfig {
                 host: utils::env::read_str_env("POSTGRES_HOST", "localhost".into()),
                 port: utils::env::read_int_env("POSTGRES_PORT", 5432) as u16,
-                username: utils::env::read_str_env("POSTGRES_USERNAME", "admin".into()),
-                password: utils::env::read_str_env("POSTGRES_PASSWORD", "admin123".into()),
-                db_name: utils::env::read_str_env("POSTGRES_DBNAME", "shopdb".into()),
+                username: utils::env::read_str_env("POSTGRES_USERNAME", "postgres".into()),
+                password: utils::env::read_str_env("POSTGRES_PASSWORD", "postgres".into()),
+                db_name: utils::env::read_str_env("POSTGRES_DBNAME", "shop-db".into()),
             },
         }
     }
 }
 
-fn load_env(env: AppEnv) {
+fn load_env(env: &AppEnv) {
     match env {
         AppEnv::Dev => match dotenvy::dotenv() {
-            Ok(_) => println!("Load env success"),
+            Ok(_) => {}
             Err(e) => panic!("Could not load .env file: {e}"),
         },
         AppEnv::Prod => {}
