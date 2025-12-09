@@ -1,7 +1,8 @@
 use actix_web::{App, HttpServer};
 use simple_shop_backend::{
     config::{log::init_logger, AppConfig, AppEnv},
-    db,
+    db::{self, repository::UserRepo},
+    models::user::Role,
 };
 
 #[actix_web::main]
@@ -15,17 +16,25 @@ async fn main() -> std::io::Result<()> {
 
     let pdb = db::Postgres::new(config.db_config).await;
 
-    match sqlx::query(r#"SELECT * from "users""#)
-        .fetch_all(&pdb.pool)
+    // match sqlx::query(r#"SELECT * from "users""#)
+    //     .fetch_all(&pdb.pool)
+    //     .await
+    // {
+    //     Ok(data) => {
+    //         log::info!("{:?}", data);
+    //     }
+    //     Err(e) => {
+    //         log::error!("{}", e);
+    //     }
+    // };
+
+    let user_repo = db::repository::users::UserRepository::new(pdb.pool);
+    let id = user_repo
+        .create_user("Johndoedoe", "123", Role::Admin)
         .await
-    {
-        Ok(data) => {
-            log::info!("{:?}", data);
-        }
-        Err(e) => {
-            log::error!("{}", e);
-        }
-    };
+        .unwrap();
+    let user = user_repo.get_user(id).await.unwrap();
+    log::info!("{:?}", user);
 
     let server = HttpServer::new(|| App::new())
         .bind((

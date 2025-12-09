@@ -12,11 +12,7 @@ pub struct Postgres {
 
 impl Postgres {
     pub async fn new(config: DBConfig) -> Self {
-        let url = format!(
-            "postgres://{}:{}@{}:{}/{}",
-            config.username, config.password, config.host, config.port, config.db_name
-        );
-        let pool = match PgPoolOptions::new().connect(&url).await {
+        let pool = match PgPoolOptions::new().connect(&config.db_url).await {
             Ok(p) => p,
             Err(e) => {
                 panic!("Cannot connect to postgres db: {}", e)

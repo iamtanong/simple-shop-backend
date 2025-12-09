@@ -2,7 +2,7 @@ mod app;
 pub mod db;
 pub mod log;
 
-use crate::utils;
+use crate::utils::env::{read_int_env, read_str_env};
 use derive_more::Display;
 
 #[derive(Debug)]
@@ -16,16 +16,15 @@ impl AppConfig {
         load_env(env);
         AppConfig {
             server_config: app::ServerConfig {
-                host: utils::env::read_str_env("SERVER_HOST", "localhost".into()),
-                port: utils::env::read_int_env("SERVER_PORT", 8082) as u16,
-                log_level: utils::env::read_str_env("LOG_LEVEL", "info".into()),
+                host: read_str_env("SERVER_HOST", "localhost".into()),
+                port: read_int_env("SERVER_PORT", 8082) as u16,
+                log_level: read_str_env("LOG_LEVEL", "info".into()),
             },
             db_config: db::DBConfig {
-                host: utils::env::read_str_env("POSTGRES_HOST", "localhost".into()),
-                port: utils::env::read_int_env("POSTGRES_PORT", 5432) as u16,
-                username: utils::env::read_str_env("POSTGRES_USERNAME", "postgres".into()),
-                password: utils::env::read_str_env("POSTGRES_PASSWORD", "postgres".into()),
-                db_name: utils::env::read_str_env("POSTGRES_DBNAME", "shop-db".into()),
+                db_url: read_str_env(
+                    "DATABASE_URL",
+                    "postgres://postgres:postgres@localhost:5432/shop-db".into(),
+                ),
             },
         }
     }
