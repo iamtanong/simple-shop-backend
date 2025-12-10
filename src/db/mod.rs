@@ -6,6 +6,8 @@ pub mod repository;
 pub trait DB {}
 impl DB for Postgres {}
 
+/// Some resource for sqlx:
+/// - Type mapping: https://docs.rs/sqlx/latest/sqlx/postgres/types/index.html
 pub struct Postgres {
     pub pool: Pool<sqlx::Postgres>,
 }

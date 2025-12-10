@@ -1,12 +1,15 @@
+use async_trait::async_trait;
+
 use crate::{models, utils::error::AppError};
 
 pub mod users;
 
+#[async_trait]
 pub trait UserRepo {
-    async fn create_user<'a>(
-        &'a self,
-        username: &'a str,
-        password: &'a str,
+    async fn create_user(
+        &self,
+        username: &str,
+        password: &str,
         role: models::user::Role,
     ) -> Result<i64, AppError>;
 

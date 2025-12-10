@@ -1,8 +1,8 @@
-use sqlx::{query, query_as, PgPool};
-
 use crate::db::repository::UserRepo;
 use crate::models;
 use crate::utils::error::AppError;
+use async_trait::async_trait;
+use sqlx::{query, query_as, PgPool};
 
 pub struct UserRepository {
     db_pool: PgPool,
@@ -14,6 +14,7 @@ impl UserRepository {
     }
 }
 
+#[async_trait]
 impl UserRepo for UserRepository {
     async fn create_user(
         &self,
